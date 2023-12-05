@@ -6,25 +6,26 @@ import (
 )
 
 type Pessoa struct {
-	PessoaID           int64
-	Nome               string
-	Iniciais           sql.NullString
-	Conhecido          sql.NullString
-	Descricao          sql.NullString
-	ImagemURL          sql.NullString
-	LocalNascimentoID  sql.NullInt64
-	DataNascimento     sql.NullTime
-	LocalFalecimentoID sql.NullInt64
-	DataFalecimento    sql.NullTime
+	PessoaID int64
+	Nome     string
+	Iniciais sql.NullString
+	// Conhecido          sql.NullString
+	Descricao sql.NullString
+	ImagemURL sql.NullString
+	Titulo    sql.NullString
+	// LocalNascimentoID  sql.NullInt64
+	// DataNascimento     sql.NullTime
+	// LocalFalecimentoID sql.NullInt64
+	// DataFalecimento    sql.NullTime
 }
 
 type Voo struct {
-	VooID          int64
-	Data           time.Time
-	NumPassageiros sql.NullInt64
-	AeronaveID     int64
-	DestinoID      string
-	OrigemID       string
+	VooID int64
+	Data  time.Time
+	// NumPassageiros sql.NullInt64
+	AeronaveID int64
+	DestinoID  string
+	OrigemID   string
 }
 
 type Aeronave struct {
@@ -49,8 +50,9 @@ type Local struct {
 	LocalID      int64
 	CidadeEstado string
 	Descricao    sql.NullString
-	Pais         string
-	ImagemURL    sql.NullString
+	// Pais         string
+	ImagemURL sql.NullString
+	Titulo    sql.NullString
 }
 
 type Embarca struct {

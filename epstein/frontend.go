@@ -18,8 +18,8 @@ type PessoaPagina struct {
 var PessoaTemp = template.Must(template.New("PessoaTemplate").Parse(`
 <a href=/>home</a>
 
-<h1><a href=pessoas>Pessoa</a> {{.Nome}}</h1>
-<img src="https://loremflickr.com/640/480/" alt="certamente nao eh um gato">
+<h1><a href=pessoas>Pessoa</a> {{.Titulo}}</h1>
+<img src="{{.ImagemURL.Value}}" alt="certamente nao eh um gato">
 <table>
 <tbody>
 	<tr>
@@ -29,19 +29,6 @@ var PessoaTemp = template.Must(template.New("PessoaTemplate").Parse(`
 	<tr>
 		<th>Iniciais</th>
 		<td>{{.Iniciais}}</td>
-	</tr>
-	<tr>
-		<th>Local Nascimento ID</th>
-		<td>>{{.LocalNascimentoID}}</td>
-	</tr>
-	<tr>
-		<th>Aniversário</th>
-		<td>{{.DataNascimento}}</td>
-	</tr>
-	<tr>
-		<th>Morte</th>
-		<td>{{.LocalFalecimentoID}}</td>
-		<td>{{.DataFalecimento}}</td>
 	</tr>
 </tbody>
 </table>
@@ -73,12 +60,10 @@ home</a>
 <table>
 	<tr>
 		<th>Nome</th>
-		<th>Nascimento</th>
 	</tr>
 {{range $k, $v := .}}
 	<tr>
 		<td><a href=/pessoas?pessoaid={{$k}}>{{ $v.Nome }}</a></td>
-		<td>{{ $v.DataNascimento}}</td>
 	</tr>
 {{end}}
 </table>
@@ -103,10 +88,6 @@ var VooTemp = template.Must(template.New("PessoaTemplate").Parse(`
 	<tr>
 		<th>Data</th>
 		<td>{{.Data}}</td>
-	</tr>
-	<tr>
-		<th>NumPassageiros</th>
-		<td>{{.NumPassageiros}}</td>
 	</tr>
 	<tr>
 		<th><a href=naves>Aeronave</a></th>
@@ -145,7 +126,6 @@ home</a>
 	<tr>
 		<th>NumVoo</th>
 		<th>Data</th>
-		<th>NumPassageiros</th>
 		<th><a href=naves>NumAeronave</a></th>
 		<th>Origem</th>
 		<th>Destino</th>
@@ -154,7 +134,6 @@ home</a>
 	<tr>
 		<td><a href=voos?vooid={{$k}}>{{$k}}</a></td>
 		<td>{{$v.Data}}</td>
-		<td>{{$v.NumPassageiros}}</td>
 		<td><a href=naves?naveid={{.AeronaveID}}>{{.AeronaveID}}</a></td>
 		<td><a href=aeroportos?codigo={{$v.OrigemID}}>{{$v.OrigemID}}</a></td>
 		<td><a href=aeroportos?codigo={{$v.DestinoID}}>{{$v.DestinoID}}</a></td
@@ -166,16 +145,18 @@ home</a>
 // Deve guardar localização dos aeroportos também
 type PaginaPorto struct {
 	Aeroporto
-	CEP  string //Cidade Estado
-	Pais string
+	Nome        string //Cidade Estado
+	VoosOrigem  []*Voo
+	VoosDestino []*Voo
+	// Pais string
 }
 
 // Recebe um *PaginaPorto
 var PaginaPortoTemp = template.Must(template.New("PaginaPortoTemplate").Parse(`
 <a href=/>home</a>
 
-<h1><a href=aeroportos>Aeroporto</a> #{{.CodigoAeroporto}}</h1>
-<img src="https://loremflickr.com/640/480/" alt="certamente nao eh um gato">
+<h1><a href=aeroportos>Aeroporto</a> #{{.Titulo}}</h1>
+<img src="{{.ImagemURL.Value}}" alt="certamente nao eh um gato">
 <table>
 <tbody>
 	<tr>
@@ -184,16 +165,47 @@ var PaginaPortoTemp = template.Must(template.New("PaginaPortoTemplate").Parse(`
 	</tr>
 	<tr>
 		<th><a href=locais>Cidade</a></th>
-		<td><a href=locais?localid={{.LocalID}}>{{.CEP}}</a></td>
-	</tr>
-	<tr>
-		<th>Pais</th>
-		<td>{{.Pais}}</td>
+		<td><a href=locais?localid={{.LocalID}}>{{.Nome}}</a></td>
 	</tr>
 </tbody>
 </table>
 <h3>Descricao</h3>
 <p>{{.Descricao}}</p>
+
+<h3>Voos Origem</h3>
+<table>
+	<tr>
+		<th><a href=voos>NumVoo</a></th>
+		<th>Origem</th>
+		<th>Destino</th>
+	</tr>
+{{range .VoosOrigem}}
+	<tr>
+		<td><a href=voos?vooid={{.VooID}}>{{.VooID}}</a></td>
+		<td><a href=aeroportos?codigo={{.OrigemID}}>{{.OrigemID}}</a></td>
+		<td><a href=aeroportos?codigo={{.DestinoID}}>{{.DestinoID}}</a></td>
+	<tr>
+{{end}}
+</table>
+
+<h3>Voos Destino</h3>
+<table>
+	<tr>
+		<th><a href=voos>NumVoo</a></th>
+		<th>Origem</th>
+		<th>Destino</th>
+	</tr>
+{{range .VoosDestino}}
+	<tr>
+		<td><a href=voos?vooid={{.VooID}}>{{.VooID}}</a></td>
+		<td><a href=aeroportos?codigo={{.OrigemID}}>{{.OrigemID}}</a></td>
+		<td><a href=aeroportos?codigo={{.DestinoID}}>{{.DestinoID}}</a></td>
+	<tr>
+{{end}}
+</table>
+
+
+
 `))
 
 // Recebe um map[string]*PaginaPorto
@@ -205,13 +217,11 @@ var MapAeroportosTemp = template.Must(template.New("MapPaginaPortoSTemplate").Pa
 	<tr>
 		<th>Codigo</th>
 		<th>Cidade</th>
-		<th>Pais</th>
 	</tr>
 {{range $k, $v := .}}
 	<tr>
 		<td><a href=aeroportos?codigo={{$k}}>{{$k}}</a></td>
-		<td><a href=locais?localid={{$v.LocalID}}>{{$v.CEP}}</a></td>
-		<td>{{$v.Pais}}</td>
+		<td><a href=locais?localid={{$v.LocalID}}>{{$v.Nome}}</a></td>
 	</tr>
 {{end}}
 </table>
@@ -219,16 +229,16 @@ var MapAeroportosTemp = template.Must(template.New("MapPaginaPortoSTemplate").Pa
 
 type PaginaLocal struct {
 	*Local
-	PessoasNascidas []*Pessoa
-	Aeroportos      []*Aeroporto
+	// PessoasNascidas []*Pessoa
+	Aeroportos []*Aeroporto
 }
 
 // recebe um PaginaLocal
 var LocalTemp = template.Must(template.New("LocalTemplate").Parse(`
 <a href=/>home</a>
 
-<h1><a href=locais>Local</a> {{.CidadeEstado}} {{.Pais }}</h1>
-<img src="https://loremflickr.com/640/480/" alt="certamente nao eh um gato">
+<h1><a href=locais>Local</a> {{.Titulo}}</h1>
+<img src="{{.ImagemURL.Value}}" alt="certamente nao eh um gato">
 <table>
 <tbody>
 	<tr>
@@ -236,31 +246,13 @@ var LocalTemp = template.Must(template.New("LocalTemplate").Parse(`
 		<td>{{.LocalID}}</td>
 	</tr>
 	<tr>
-		<th>CE</th>
+		<th>Nome</th>
 		<td>{{.CidadeEstado}}</td>
-	</tr>
-	<tr>
-		<th>Pais</th>
-		<td>{{.Pais}}</td>
 	</tr>
 </tbody>
 </table>
 <h3>Descricao</h3>
 <p>{{.Descricao}}</p>
-
-<h3>Pessoas Nascidas Aqui!</h3>
-<table>
-	<tr>
-		<th>Nome</th>
-		<th>Data Nascimento</th>
-	</tr>
-	{{range .PessoasNascidas}}
-	<tr>
-		<th><a href=pessoas?pessoaid={{.PessoaID}}>{{.Nome}}</th>
-		<th>{{.DataNascimento}}</th>
-	</tr>
-	{{end}}
-</table>
 
 <h3><a href=aeroportos>Aeroportos</a> da Cidade</h3>
 <table>
@@ -280,14 +272,12 @@ var MapLocaisTemp = template.Must(template.New("MapLocaisTemplate").Parse(`
 <table>
 	<tr>
 		<th>LocalID</th>
-		<th>CE</th>
-		<th>Pais</th>
+		<th>Nome</th>
 	</tr>
 {{range $k, $v := .}}
 	<tr>
 		<td><a href=locais?localid={{$k}}>{{$k}}</a></td>
 		<td>{{$v.CidadeEstado}}</td>
-		<td>{{$v.Pais}}</td>
 	</tr>
 {{end}}
 </table>
@@ -304,7 +294,7 @@ var AeronaveTemp = template.Must(template.New("AeronaveTemplate").Parse(`
 
 
 <h1><a href=naves>Aeronave</a> #{{.NumCauda}}</h1>
-<img src="https://loremflickr.com/640/480/" alt="certamente nao eh um gato">
+<img src="{{.ImagemURL.Value}}" alt="certamente nao eh um gato">
 <table>
 <tbody>
 	<tr>

@@ -17,9 +17,8 @@ func TodasPessoas(conn *sql.DB) (map[int64]*Pessoa, error) {
 	var pessoas = make(map[int64]*Pessoa, 200)
 	for rows.Next() {
 		var pes Pessoa
-		err := rows.Scan(&pes.PessoaID, &pes.Nome, &pes.Iniciais, &pes.Conhecido,
-			&pes.DataNascimento, &pes.DataFalecimento, &pes.Descricao,
-			&pes.LocalNascimentoID, &pes.LocalFalecimentoID, &pes.ImagemURL)
+		err := rows.Scan(&pes.PessoaID, &pes.Nome, &pes.Iniciais,
+			&pes.ImagemURL, &pes.Descricao, &pes.Titulo)
 
 		// n usarei reflect, mt complicado
 		if err != nil {
@@ -43,7 +42,7 @@ func TodosLocais(conn *sql.DB) (map[int64]*Local, error) {
 	var locais = make(map[int64]*Local, 200)
 	for rows.Next() {
 		var loc Local
-		err := rows.Scan(&loc.LocalID, &loc.Descricao, &loc.CidadeEstado, &loc.Pais, &loc.ImagemURL)
+		err := rows.Scan(&loc.LocalID, &loc.Descricao, &loc.CidadeEstado, &loc.ImagemURL, &loc.Titulo)
 
 		// n usarei reflect, mt complicado
 		if err != nil {
@@ -67,7 +66,7 @@ func TodosVoos(conn *sql.DB) (map[int64]*Voo, error) {
 	var MapaVoos = make(map[int64]*Voo, 200)
 	for rows.Next() {
 		var voo Voo
-		err := rows.Scan(&voo.VooID, &voo.NumPassageiros, &voo.Data, &voo.OrigemID,
+		err := rows.Scan(&voo.VooID, &voo.Data, &voo.OrigemID,
 			&voo.DestinoID, &voo.AeronaveID)
 
 		// n usarei reflect, mt complicado
@@ -92,7 +91,8 @@ func TodosAeroportos(conn *sql.DB) (map[string]*Aeroporto, error) {
 	var aeroportos = make(map[string]*Aeroporto, 40)
 	for rows.Next() {
 		var porto Aeroporto
-		err := rows.Scan(&porto.CodigoAeroporto, &porto.Descricao, &porto.LocalID, &porto.ImagemURL)
+		err := rows.Scan(&porto.CodigoAeroporto, &porto.LocalID,
+			&porto.ImagemURL, &porto.Descricao, &porto.Titulo)
 
 		// n usarei reflect, mt complicado
 		if err != nil {
@@ -151,8 +151,8 @@ func PassageirosPorVoo(IDVoo int64, conn *sql.DB) ([]*Pessoa, error) {
 }
 
 func TodosPaginaPortos(conn *sql.DB) (map[string]*PaginaPorto, error) {
-	rows, err := conn.Query(`SELECT Codigo, LocalID, CidadeEstado, NomePais, A.Descricao, A.urlImagem FROM 
-		Aeroporto as A JOIN Localidade ON Localizacao = LocalID`)
+	rows, err := conn.Query(`SELECT Codigo, A.urlImagem, A.Descricao, A.titulo,nome,LocalID nome from 
+		Aeroporto as A join Localidade on Localizacao = LocalID;`)
 	if err != nil {
 		return nil, err
 	}
@@ -161,12 +161,17 @@ func TodosPaginaPortos(conn *sql.DB) (map[string]*PaginaPorto, error) {
 	var mapaPortos = make(map[string]*PaginaPorto, 20)
 	for rows.Next() {
 		var pp PaginaPorto
-		err := rows.Scan(&pp.CodigoAeroporto, &pp.LocalID, &pp.CEP, &pp.Pais, &pp.Descricao, &pp.ImagemURL)
+		err := rows.Scan(&pp.CodigoAeroporto, &pp.ImagemURL, &pp.Descricao,
+			&pp.Titulo, &pp.Nome, &pp.LocalID)
 
 		// n usarei reflect, mt complicado
 		if err != nil {
 			return nil, fmt.Errorf("TodosPaginaPortos: %v", err)
 		}
+
+		// pp.VoosDestino, err = VoosPorAeroporto(pp.CodigoAeroporto, true, conn)
+		// pp.VoosOrigem, err = VoosPorAeroporto(pp.CodigoAeroporto, false, conn)
+
 		mapaPortos[pp.CodigoAeroporto] = &pp
 	}
 	if err := rows.Err(); err != nil {
@@ -185,8 +190,8 @@ func TodasAeronaves(conn *sql.DB) (map[int64]*Aeronave, error) {
 	var naves = make(map[int64]*Aeronave, 10)
 	for rows.Next() {
 		var aero Aeronave
-		err = rows.Scan(&aero.AeronaveID, &aero.NumAssentos, &aero.NumCauda,
-			&aero.Modelo, &aero.Fabricante, &aero.ImagemURL)
+		err = rows.Scan(&aero.AeronaveID, &aero.NumCauda, &aero.Modelo,
+			&aero.Fabricante, &aero.ImagemURL, &aero.NumAssentos)
 
 		if err != nil {
 			return nil, fmt.Errorf("TodasAeronaves: %v", err)
@@ -223,26 +228,26 @@ func VoosPorNave(AeronaveID int64, conn *sql.DB) ([]*Voo, error) {
 	return resp, nil
 }
 
-func PessoasPorLocal(LocalID int64, conn *sql.DB) ([]*Pessoa, error) {
-	rows, err := conn.Query("SELECT PessoaID,Nome,DataNasc FROM Pessoa WHERE CidadeNascimento = ?", LocalID)
-	if err != nil {
-		return nil, err
-	}
+// func PessoasPorLocal(LocalID int64, conn *sql.DB) ([]*Pessoa, error) {
+// 	rows, err := conn.Query("SELECT PessoaID,Nome,DataNasc FROM Pessoa WHERE CidadeNascimento = ?", LocalID)
+// 	if err != nil {
+// 		return nil, err
+// 	}
 
-	pessoas := make([]*Pessoa, 0, 10)
-	for rows.Next() {
-		var pes Pessoa
-		err := rows.Scan(&pes.PessoaID, &pes.Nome, &pes.DataNascimento)
-		if err != nil {
-			return nil, fmt.Errorf("PessoasPorLocal %d: %v", LocalID, err)
-		}
-		pessoas = append(pessoas, &pes)
-	}
-	if err := rows.Err(); err != nil {
-		return nil, fmt.Errorf("PessoasPorLocal %d: %v", LocalID, err)
-	}
-	return pessoas, nil
-}
+// 	pessoas := make([]*Pessoa, 0, 10)
+// 	for rows.Next() {
+// 		var pes Pessoa
+// 		err := rows.Scan(&pes.PessoaID, &pes.Nome, &pes.DataNascimento)
+// 		if err != nil {
+// 			return nil, fmt.Errorf("PessoasPorLocal %d: %v", LocalID, err)
+// 		}
+// 		pessoas = append(pessoas, &pes)
+// 	}
+// 	if err := rows.Err(); err != nil {
+// 		return nil, fmt.Errorf("PessoasPorLocal %d: %v", LocalID, err)
+// 	}
+// 	return pessoas, nil
+// }
 
 func AeroportosPorLocal(LocalID int64, conn *sql.DB) ([]*Aeroporto, error) {
 	rows, err := conn.Query("SELECT Codigo FROM Aeroporto WHERE Localizacao = ?", LocalID)
@@ -263,4 +268,36 @@ func AeroportosPorLocal(LocalID int64, conn *sql.DB) ([]*Aeroporto, error) {
 		return nil, fmt.Errorf("AeroportoPorLocal %d: %v", LocalID, err)
 	}
 	return aeroportos, nil
+}
+
+// ArrDep determina se você buscará por destino ou por origem: true, false
+func VoosPorAeroporto(Codigo string, ArrDep bool, conn *sql.DB) ([]*Voo, error) {
+	const dest = `SELECT VooID, Origem, Destino, DataVoo FROM 
+	Voo WHERE Destino = ? ORDER BY DataVoo`
+	const orig = `SELECT VooID, Origem, Destino, DataVoo FROM 
+	Voo WHERE Origem = ? ORDER BY DataVoo`
+
+	query := orig
+	if ArrDep {
+		query = dest
+	}
+
+	rows, err := conn.Query(query, Codigo)
+	if err != nil {
+		return nil, err
+	}
+
+	resp := make([]*Voo, 0, 20)
+	for rows.Next() {
+		var v Voo
+		err := rows.Scan(&v.VooID, &v.OrigemID, &v.DestinoID, &v.Data)
+		if err != nil {
+			return nil, fmt.Errorf("VoosPorAeroporto %s: %v", Codigo, err)
+		}
+		resp = append(resp, &v)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("VoosPorAeroporto %s: %v", Codigo, err)
+	}
+	return resp, nil
 }

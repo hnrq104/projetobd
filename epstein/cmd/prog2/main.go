@@ -109,6 +109,15 @@ func (c Cache) listaPortos(w http.ResponseWriter, r *http.Request) {
 			log.Print("Problem parsing form")
 			return
 		}
+		var err error
+		pp.VoosDestino, err = epstein.VoosPorAeroporto(pp.CodigoAeroporto, true, c.db)
+		pp.VoosOrigem, err = epstein.VoosPorAeroporto(pp.CodigoAeroporto, false, c.db)
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			fmt.Fprintf(w, "VoosPorAeroporto error")
+			log.Print("VoosPorAeroporto error")
+			return
+		}
 
 		log.Print(epstein.PaginaPortoTemp.Execute(w, pp))
 	} else {
@@ -135,13 +144,6 @@ func (c Cache) listaLocais(w http.ResponseWriter, r *http.Request) {
 		}
 		var pagLoc epstein.PaginaLocal
 		pagLoc.Local = loc
-
-		pagLoc.PessoasNascidas, err = epstein.PessoasPorLocal(loc.LocalID, c.db)
-		if err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
-			fmt.Fprintf(w, "Problema Procurando Pessoas")
-			log.Print("Problema procurando pessoas")
-		}
 
 		pagLoc.Aeroportos, err = epstein.AeroportosPorLocal(loc.LocalID, c.db)
 		if err != nil {
@@ -198,7 +200,7 @@ func main() {
 		Passwd:               os.Getenv("DBPASS"),
 		Net:                  "tcp",
 		Addr:                 "localhost:3306",
-		DBName:               "epstein2",
+		DBName:               "epfinal",
 		AllowNativePasswords: true,
 		ParseTime:            true,
 	}
