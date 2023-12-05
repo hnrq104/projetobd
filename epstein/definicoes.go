@@ -39,6 +39,7 @@ type Aeronave struct {
 
 type Aeroporto struct {
 	CodigoAeroporto string
+	Titulo          sql.NullString
 	Descricao       sql.NullString
 	ImagemURL       sql.NullString
 	LocalID         int64
