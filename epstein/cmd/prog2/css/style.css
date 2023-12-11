@@ -1,0 +1,152 @@
+@import url('https://fonts.googleapis.com/css2?family=Kanit&display=swap');
+
+* {
+    box-sizing: border-box;
+    font-family: Kanit;
+}
+
+.main-page{
+    background-image: url("imagens/A_ilha.jpg");
+    background-blend-mode: multiply;
+    background-size: cover;
+    height: 50vh;
+    border-image: none;
+    margin: 0;
+    padding: 0;
+}
+
+.side-page body{
+    background-color: #424242;
+    margin: 0;
+    padding: 0;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.Titulo {
+    text-align: center;
+    padding: 25px;
+    font-size: 3.5em;
+}
+
+.side-titulo{
+    text-align: center;
+    color: black;
+    padding: 10px;
+    font-size: 2.5em;
+    text-decoration: none;
+}
+
+.descricao{
+    text-align: center;
+    font-size: 1.5em;
+    border-bottom: 1px solid black;
+    margin: 0 5% 0 5%;
+}
+
+.home-table{
+    margin: auto;
+}
+
+.home-table tr{
+    display: inline-block;  
+    padding: 1.5em;
+
+}
+
+.return:hover{
+    background-color: rgba(255, 255, 255, 0.7);
+
+}
+
+.main-image{
+    display: block;
+    margin: auto;  
+    height: 300px;
+}
+
+.home-table th{
+    margin: 20rem;
+    background-color: #323232;
+    border-radius: 10%;
+}
+.home-table th:hover{
+    background-color: #222222;
+}
+/*  REAL AGORA */
+
+
+.infoTable {
+
+    width: 50%;
+    margin: auto;
+    border-collapse: collapse;
+    background: rgba(190, 163, 163, 0.89);
+
+}
+
+th, td {
+    color: rgba(255, 255, 255, 0.8);
+    padding: 1rem;
+    font-size: 1.2rem;
+}
+
+
+.links {
+    color: rgb(255, 255, 255, 0.8);
+    text-decoration: none;
+}
+
+.infoTable th{
+    text-align: left;
+}
+
+.infoTable caption {
+    color: rgba(255, 255, 255, 0.8);
+    text-transform: uppercase;
+    text-align: center;
+    font-size: 1.5rem;
+}
+
+.infoTable tr:nth-of-type(2n) {
+    background: hsl(0 0% 0% / 0.2);
+}
+
+
+.side-header{
+    height: 17vh;
+    background-image: url("imagens/A_ilha.jpg");
+    background-size: cover;
+    border: none;
+}
+
+
+
+.titulo{
+    font-weight: bold;
+    text-align: center;
+    color: rgba(255, 255, 255, 0.8);
+    padding: 10px;
+    font-size: 2.5em;
+    text-decoration: none;
+}
+
+.descricao {
+    text-align: center;
+    margin-top: 2rem;
+    font-weight: normal;
+    font-size: 2rem;
+    border: none;
+}
+.text{
+    text-align: center;
+    font-size: 1.25rem;
+}
+
+.return {
+    color: black;
+    font-size: 1.45rem;
+    text-decoration: none;
+    text-transform: uppercase;
+    margin: 1%;
+    display: inline-block
+}

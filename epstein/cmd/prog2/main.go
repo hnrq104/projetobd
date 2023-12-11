@@ -253,6 +253,9 @@ func main() {
 
 	fmt.Println(time.Since(t).Milliseconds(), "ms")
 
+	fs := http.FileServer(http.Dir("./css"))
+	http.Handle("/css/", http.StripPrefix("/css", fs))
+
 	http.HandleFunc("/pessoas", c.listaPessoas)
 	http.HandleFunc("/voos", c.listaVoos)
 	http.HandleFunc("/aeroportos", c.listaPortos)

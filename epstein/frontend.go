@@ -16,57 +16,99 @@ type PessoaPagina struct {
 // ADICIONAR LINK PARA TODOS AEROPORTOS
 // TROCAR IMAGEM DEPOIS
 var PessoaTemp = template.Must(template.New("PessoaTemplate").Parse(`
-<a href=/>home</a>
+<!DOCTYPE html>
+<html class="side-page">
+<head>
+	<meta charset="UTF-8">
+	<title>Pessoa</title>
+	<link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <header class="side-header">
+    	<a class="return" href=/>Home</a>
+	</header>
+	
+    <h1 class="titulo"><a class="links" href=pessoas>Pessoa</a> {{.Nome}}</h1>
+    <img class="main-image" src="https://loremflickr.com/640/480/" alt="certamente nao eh um gato">
+    <table class="infoTable">
+    <tbody>
+        <tr>
+            <th>Nome</th>
+            <td>{{.Nome}}</td>
+        </tr>
+        <tr>
+            <th>Iniciais</th>
+            <td>{{.Iniciais}}</td>
+        </tr>
+        <tr>
+            <th>Local Nascimento ID</th>
+            <td>{{.LocalNascimentoID}}</td>
+        </tr>
+        <tr>
+            <th>Aniversário</th>
+            <td>{{.DataNascimento}}</td>
+        </tr>
+        <tr>
+            <th>Onde morreu</th>
+            <td>{{.LocalFalecimentoID}}</td>
+        </tr>
+        <tr>
+            <th>Dia da Morte</th>
+            <td>{{.DataFalecimento}}</td>
+        </tr>
+    </tbody>
+    
+    </table>
+        <h3 class="descricao">Descricao</h3>
+        <p class="text">{{.Descricao}}</p>
 
-<h1><a href=pessoas>Pessoa</a> {{.Titulo}}</h1>
-<img src="{{.ImagemURL.Value}}" alt="certamente nao eh um gato">
-<table>
-<tbody>
-	<tr>
-		<th>Nome</th>
-		<td>{{.Nome}}</td>
-	</tr>
-	<tr>
-		<th>Iniciais</th>
-		<td>{{.Iniciais}}</td>
-	</tr>
-</tbody>
-</table>
-<h3>Descricao</h3>
-<p>{{.Descricao}}</p>
-<h3>Voos</h3>
-<table>
-	<tr>
-		<th><a href=voos>NumVoo</a></th>
-		<th>Origem</th>
-		<th>Destino</th>
-	</tr>
-{{range .VoosFeitos}}
-	<tr>
-		<td><a href=voos?vooid={{.VooID}}>{{.VooID}}</a></td>
-		<td><a href=aeroportos?codigo={{.OrigemID}}>{{.OrigemID}}</a></td>
-		<td><a href=aeroportos?codigo={{.DestinoID}}>{{.DestinoID}}</a></td>
-	<tr>
-{{end}}
-</table>
+    <table class="infoTable">
+        <caption>Voos</caption>
+        <tr>
+            <th><a class="links" href=voos>NumVoo</a></th>
+            <th>Origem</th>
+            <th>Destino</th>
+        </tr>
+    {{range .VoosFeitos}}
+        <tr>
+            <td><a class="links" href=voos?vooid={{.VooID}}>{{.VooID}}</a></td>
+            <td><a class="links" href=aeroportos?codigo={{.OrigemID}}>{{.OrigemID}}</a></td>
+            <td><a class="links" href=aeroportos?codigo={{.DestinoID}}>{{.DestinoID}}</a></td>
+            <tr>
+    {{end}}
+    </table>
+</body>
+</html>
 `))
 
 // Recebe um Mapa de Pessoas
 var MapPessoasTemp = template.Must(template.New("PessoasTemplate").Parse(`
-<a href=/>
-home</a>
-
-<h1>Pessoas</h1>
-<table>
-	<tr>
-		<th>Nome</th>
-	</tr>
-{{range $k, $v := .}}
-	<tr>
-		<td><a href=/pessoas?pessoaid={{$k}}>{{ $v.Nome }}</a></td>
-	</tr>
-{{end}}
-</table>
+<!DOCTYPE html>
+<html class="side-page">
+<head>
+	<meta charset="UTF-8">
+	<title>Pessoas</title>
+	<link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+	<header class="side-header">
+    	<a class="return" href=/>Home</a>
+	</header>
+    <h1 class="titulo">Pessoas</h1>
+    <table class="infoTable">
+    	<tr>
+    		<th>Nome</th>
+    		<th>Nascimento</th>
+    	</tr>
+		{{range $k, $v := .}}
+    	<tr>
+    		<td><a class="links" href=/pessoas?pessoaid={{$k}}>{{ $v.Nome }}</a></td>
+    		<td>{{ $v.DataNascimento}}</td>
+		</tr>
+		{{end}}
+    </table>
+</body>
+</html>
 `))
 
 type VooPagina struct {
@@ -76,70 +118,92 @@ type VooPagina struct {
 
 // RECEBE UM vooPagina
 var VooTemp = template.Must(template.New("PessoaTemplate").Parse(`
-<a href=/>home</a>
+<!DOCTYPE html>
+<html class="side-page">
+<head>
+	<meta charset="UTF-8">
+	<title>Voo</title>
+	<link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+	<header class="side-header">
+    	<a class="return" href=/>Home</a>
+	</header>
+	<h1 class="titulo"><a class="links" href=voos>Voo</a> #{{.VooID}}</h1>
+	<table class="infoTable"> 
+    <tbody>
+    	<tr>
+    		<th>Numero</th>
+			<th>Data</th>
+			<th>NumPassageiros</th>
+			<th><a class="links" href=naves>Aeronave</a></th>
+			<th>Origem</th>
+			<th>Destino</th>
+    	</tr>
+    	<tr>
+			<td>{{.VooID}}</td>
+    		<td>{{.Data}}</td>
+			<td>{{.NumPassageiros}}</td>
+			<td><a class="links" href=naves?naveid={{.AeronaveID}}>{{.AeronaveID}}</a></td>
+			<td><a class="links" href=aeroportos?codigo={{.OrigemID}}>{{.OrigemID}}</a></td>
+			<td><a class="links" href=aeroportos?codigo={{.DestinoID}}>{{.DestinoID}}</a></td>
 
-<h1><a href=voos>Voo</a> #{{.VooID}}</h1>
-<table>
-<tbody>
-	<tr>
-		<th>Numero</th>
-		<td>{{.VooID}}
-	</tr>
-	<tr>
-		<th>Data</th>
-		<td>{{.Data}}</td>
-	</tr>
-	<tr>
-		<th><a href=naves>Aeronave</a></th>
-		<td><a href=naves?naveid={{.AeronaveID}}>{{.AeronaveID}}</a></td>
-	</tr>
-	<tr>
-		<th>Origem</th>
-		<td><a href=aeroportos?codigo={{.OrigemID}}>{{.OrigemID}}</a></td>
-	</tr>
-	<tr>
-		<th>Destino</th>
-		<td><a href=aeroportos?codigo={{.DestinoID}}>{{.DestinoID}}</a></td>
-	</tr>
-</tbody>
-</table>
-<h3>Passageiros</h3>
-<table>
-	<tr>
-		<th>Nome</th>
-	</tr>
-{{range .Passageiros}}
-	<tr>
-		<td><a href=pessoas?pessoaid={{.PessoaID}}>{{ .Nome }}</a></td>
-	<tr>
-{{end}}
-</table>
+		</tr>
+    </tbody>
+    </table>
+
+    <table class="infoTable">
+		<caption>Passageiros</caption>
+	    <tr>
+	    	<th>Nome</th>
+	    </tr>
+		{{range .Passageiros}}
+    	<tr>
+    		<td><a class="links" href=pessoas?pessoaid={{.PessoaID}}>{{ .Nome }}</a></td>
+		<tr>
+		{{end}}
+    </table>
+</body>
+</html>
 `))
 
 // Recebe um Mapa de Voos
 var MapVoosTemp = template.Must(template.New("VoosTemplate").Parse(`
-<a href=/>
-home</a>
+<!DOCTYPE html>
+<html class="side-page">
+<head>
+	<meta charset="UTF-8">
+	<title>Voos</title>
+	<link rel="stylesheet" href="/css/style.css">
+</head>
 
-<h1>Voos</h1>
-<table>
-	<tr>
-		<th>NumVoo</th>
-		<th>Data</th>
-		<th><a href=naves>NumAeronave</a></th>
-		<th>Origem</th>
-		<th>Destino</th>
-	</tr>
-{{range $k, $v := .}}
-	<tr>
-		<td><a href=voos?vooid={{$k}}>{{$k}}</a></td>
-		<td>{{$v.Data}}</td>
-		<td><a href=naves?naveid={{.AeronaveID}}>{{.AeronaveID}}</a></td>
-		<td><a href=aeroportos?codigo={{$v.OrigemID}}>{{$v.OrigemID}}</a></td>
-		<td><a href=aeroportos?codigo={{$v.DestinoID}}>{{$v.DestinoID}}</a></td
-	</tr>
-{{end}}
-</table>
+<body>
+	<header class="side-header">
+		<a class="return" href=/>Home</a>
+	</header>
+	<h1 class="titulo">Voos</h1>
+	<table class="infoTable">
+		<tr>
+			<th>NumVoo</th>
+			<th>Data</th>
+			<th>NumPassageiros</th>
+			<th><a class="links" href=naves>NumAeronave</a></th>
+			<th>Origem</th>
+			<th>Destino</th>
+		</tr>
+		{{range $k, $v := .}}
+		<tr>
+			<td><a class="links" href=voos?vooid={{$k}}>{{$k}}</a></td>
+			<td>{{$v.Data}}</td>
+			<td>{{$v.NumPassageiros}}</td>
+			<td><a class="links" href=naves?naveid={{.AeronaveID}}>{{.AeronaveID}}</a></td>
+			<td><a class="links" href=aeroportos?codigo={{$v.OrigemID}}>{{$v.OrigemID}}</a></td>
+			<td><a class="links" href=aeroportos?codigo={{$v.DestinoID}}>{{$v.DestinoID}}</a></td>
+		</tr>
+		{{end}}
+	</table>
+</body>
+</html>
 `))
 
 // Deve guardar localização dos aeroportos também
@@ -153,78 +217,101 @@ type PaginaPorto struct {
 
 // Recebe um *PaginaPorto
 var PaginaPortoTemp = template.Must(template.New("PaginaPortoTemplate").Parse(`
-<a href=/>home</a>
+<!DOCTYPE html>
+<html class="side-page">
+<head>
+	<meta charset="UTF-8">
+	<title>Aeroporto</title>
+	<link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
 
-<h1><a href=aeroportos>Aeroporto</a> #{{.Titulo}}</h1>
+	<header class="side-header">
+    	<a class="return" href=/>Home</a>
+	</header>
+
+<h1 class="titulo"><a class="links" href=aeroportos>Aeroporto</a> #{{.Titulo}}</h1>
 <img src="{{.ImagemURL.Value}}" alt="certamente nao eh um gato">
-<table>
+<table class="infoTable">
 <tbody>
 	<tr>
 		<th>Codigo</th>
 		<td>{{.CodigoAeroporto}}</td>
 	</tr>
 	<tr>
-		<th><a href=locais>Cidade</a></th>
-		<td><a href=locais?localid={{.LocalID}}>{{.Nome}}</a></td>
+		<th><a class="links" href=locais>Cidade</a></th>
+		<td><a class="links" href=locais?localid={{.LocalID}}>{{.Nome}}</a></td>
 	</tr>
 </tbody>
 </table>
-<h3>Descricao</h3>
-<p>{{.Descricao}}</p>
+<h3 class="descricao">Descricao</h3>
+<p class="text">{{.Descricao}}</p>
 
-<h3>Voos Origem</h3>
-<table>
+<table class="infoTable">
+	<caption>Voos Origem</caption>
 	<tr>
-		<th><a href=voos>NumVoo</a></th>
+		<th><a class="links" href=voos>NumVoo</a></th>
 		<th>Origem</th>
 		<th>Destino</th>
 	</tr>
 {{range .VoosOrigem}}
 	<tr>
-		<td><a href=voos?vooid={{.VooID}}>{{.VooID}}</a></td>
-		<td><a href=aeroportos?codigo={{.OrigemID}}>{{.OrigemID}}</a></td>
-		<td><a href=aeroportos?codigo={{.DestinoID}}>{{.DestinoID}}</a></td>
+		<td><a class="links" href=voos?vooid={{.VooID}}>{{.VooID}}</a></td>
+		<td><a class="links" href=aeroportos?codigo={{.OrigemID}}>{{.OrigemID}}</a></td>
+		<td><a class="links" href=aeroportos?codigo={{.DestinoID}}>{{.DestinoID}}</a></td>
 	<tr>
 {{end}}
 </table>
 
-<h3>Voos Destino</h3>
-<table>
+<table class="infoTable">
+	<caption>Voos Destino</caption>
 	<tr>
-		<th><a href=voos>NumVoo</a></th>
+		<th><a class="links" href=voos>NumVoo</a></th>
 		<th>Origem</th>
 		<th>Destino</th>
 	</tr>
 {{range .VoosDestino}}
 	<tr>
-		<td><a href=voos?vooid={{.VooID}}>{{.VooID}}</a></td>
-		<td><a href=aeroportos?codigo={{.OrigemID}}>{{.OrigemID}}</a></td>
-		<td><a href=aeroportos?codigo={{.DestinoID}}>{{.DestinoID}}</a></td>
+		<td><a class="links" href=voos?vooid={{.VooID}}>{{.VooID}}</a></td>
+		<td><a class="links" href=aeroportos?codigo={{.OrigemID}}>{{.OrigemID}}</a></td>
+		<td><a class="links" href=aeroportos?codigo={{.DestinoID}}>{{.DestinoID}}</a></td>
 	<tr>
 {{end}}
 </table>
-
-
-
+</body>
+</html>
 `))
 
 // Recebe um map[string]*PaginaPorto
 var MapAeroportosTemp = template.Must(template.New("MapPaginaPortoSTemplate").Parse(`
-<a href=/>home</a>
+<!DOCTYPE html>
+<html class="side-page">
+<head>
+	<meta charset="UTF-8">
+	<title>Aeroportos</title>
+	<link rel="stylesheet" href="/css/style.css">
+</head>
 
-<h1>Aeroportos</h1>
-<table>
+<body>
+	<header class="side-header">
+    	<a class="return" href=/>Home</a>
+	</header>
+
+<h1 class="titulo">Aeroportos</h1>
+<table class="infoTable">
 	<tr>
 		<th>Codigo</th>
 		<th>Cidade</th>
 	</tr>
 {{range $k, $v := .}}
 	<tr>
-		<td><a href=aeroportos?codigo={{$k}}>{{$k}}</a></td>
-		<td><a href=locais?localid={{$v.LocalID}}>{{$v.Nome}}</a></td>
+		<td><a class="links" href=aeroportos?codigo={{$k}}>{{$k}}</a></td>
+		<td><a class="links" href=locais?localid={{$v.LocalID}}>{{$v.Nome}}</a></td>
 	</tr>
 {{end}}
 </table>
+</body>
+</html>
 `))
 
 type PaginaLocal struct {
@@ -235,52 +322,78 @@ type PaginaLocal struct {
 
 // recebe um PaginaLocal
 var LocalTemp = template.Must(template.New("LocalTemplate").Parse(`
-<a href=/>home</a>
+<!DOCTYPE html>
+<html class="side-page">
+<head>
+	<meta charset="UTF-8">
+	<title>Aeronave</title>
+	<link rel="stylesheet" href="/css/style.css">
+</head>
 
-<h1><a href=locais>Local</a> {{.Titulo}}</h1>
-<img src="{{.ImagemURL.Value}}" alt="certamente nao eh um gato">
-<table>
-<tbody>
-	<tr>
-		<th>LocalID</th>
-		<td>{{.LocalID}}</td>
-	</tr>
-	<tr>
-		<th>Nome</th>
-		<td>{{.CidadeEstado}}</td>
-	</tr>
-</tbody>
-</table>
-<h3>Descricao</h3>
-<p>{{.Descricao}}</p>
+<body>
+    <header class="side-header">
+		<a class="return" href=/>Home</a>
+	</header>
 
-<h3><a href=aeroportos>Aeroportos</a> da Cidade</h3>
-<table>
-	{{range .Aeroportos}}
-	<tr>
-		<th><a href=aeroportos?codigo={{.CodigoAeroporto}}>{{.CodigoAeroporto}}</th>
-	</tr>
-	{{end}}
-</table>
+    <h1 class="titulo"><a class="links" href=locais>Local</a> {{.Titulo}}</h1>
+    <img src="{{.ImagemURL.Value}}" alt="certamente nao eh um gato">
+    <table class="infoTable">
+    <tbody>
+    	<tr>
+    		<th>LocalID</th>
+    		<td>{{.LocalID}}</td>
+    	</tr>
+    	<tr>
+    		<th>Nome</th>
+    		<td>{{.CidadeEstado}}</td>
+    	</tr>
+    </tbody>
+    </table>
+    <h3 class="descricao">Descricao</h3>
+    <p class="text">{{.Descricao}}</p>
+
+    <h3 class="titulo"><a class="links" href=aeroportos>Aeroportos</a> da Cidade</h3>
+    <table class="infoTable">
+    	{{range .Aeroportos}}
+    	<tr>
+    		<th><a class="links" href=aeroportos?codigo={{.CodigoAeroporto}}>{{.CodigoAeroporto}}</th>
+    	</tr>
+    	{{end}}
+    </table>
+    </body>
+</html>
 `))
 
 // Recebe um map[int]*Local
 var MapLocaisTemp = template.Must(template.New("MapLocaisTemplate").Parse(`
-<a href=/>home</a>
+<!DOCTYPE html>
+<html class="side-page">
+<head>
+	<meta charset="UTF-8">
+	<title>Locais</title>
+	<link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+	    <header class="side-header">
+	    	<a class="return" href=/>Home</a>
+		</header>
 
-<h1>Locais</h1>
-<table>
-	<tr>
-		<th>LocalID</th>
-		<th>Nome</th>
-	</tr>
-{{range $k, $v := .}}
-	<tr>
-		<td><a href=locais?localid={{$k}}>{{$k}}</a></td>
-		<td>{{$v.CidadeEstado}}</td>
-	</tr>
-{{end}}
-</table>
+
+	<h1 class="titulo">Locais</h1>
+	<table class="infoTable">
+		<tr>
+			<th>LocalID</th>
+			<th>Nome</th>
+		</tr>
+	{{range $k, $v := .}}
+		<tr>
+			<td><a class="links" href=locais?localid={{$k}}>{{$k}}</a></td>
+			<td>{{$v.CidadeEstado}}</td>
+		</tr>
+	{{end}}
+	</table>
+</body>
+</html>
 `))
 
 type AeronavePagina struct {
@@ -290,12 +403,20 @@ type AeronavePagina struct {
 
 // Recebe um AeronavePagina
 var AeronaveTemp = template.Must(template.New("AeronaveTemplate").Parse(`
-<a href=/>home</a>
-
-
-<h1><a href=naves>Aeronave</a> #{{.NumCauda}}</h1>
+<!DOCTYPE html>
+<html class="side-page">
+<head>
+	<meta charset="UTF-8">
+	<title>Aeronave</title>
+	<link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+	<header class="side-header">
+    	<a class="return" href=/>Home</a>
+	</header>
+    <h1 class="titulo"><a class="links" href=naves>Aeronave</a> #{{.NumCauda}}</h1>
 <img src="{{.ImagemURL.Value}}" alt="certamente nao eh um gato">
-<table>
+<table class="infoTable">
 <tbody>
 	<tr>
 		<th>AeronaveID</th>
@@ -319,66 +440,91 @@ var AeronaveTemp = template.Must(template.New("AeronaveTemplate").Parse(`
 	<tr>
 </tbody>
 </table>
-<h3>Voos</h3>
 <table>
+	<caption>Voos</caption>
 	<tr>
-		<th><a href=voos>NumVoo</a></th>
+		<th><a class="links" href=voos>NumVoo</a></th>
 		<th>Origem</th>
 		<th>Destino</th>
 	</tr>
 {{range .VoosFeitos}}
 	<tr>
-		<td><a href=voos?vooid={{.VooID}}>{{.VooID}}</a></td>
-		<td><a href=aeroportos?codigo={{.OrigemID}}>{{.OrigemID}}</a></td>
-		<td><a href=aeroportos?codigo={{.DestinoID}}>{{.DestinoID}}</a></td>
+		<td><a class="links" href=voos?vooid={{.VooID}}>{{.VooID}}</a></td>
+		<td><a class="links" href=aeroportos?codigo={{.OrigemID}}>{{.OrigemID}}</a></td>
+		<td><a class="links" href=aeroportos?codigo={{.DestinoID}}>{{.DestinoID}}</a></td>
 	<tr>
 {{end}}
 </table>
+</body>
+</html>
 `))
 
 // Recebe um mapa de Aeronaves
 var MapAeronaveTemp = template.Must(template.New("MapaAeronaveTemplate").Parse(`
-<a href=/>home</a>
-
-<h1>Aeronave</h1>
-<table>
-	<tr>
-		<th>ID</th>
-		<th>Cauda</th>
-	</tr>
-{{range $k, $v := .}}
-	<tr>
-		<td><a href=naves?naveid={{$k}}>{{$k}}</a></td>
-		<td>{{$v.NumCauda}}</td>
-	</tr>
-{{end}}
-</table>
+<!DOCTYPE html>
+<html class="side-page">
+<head>
+	<meta charset="UTF-8">
+	<title>Aeronaves</title>
+	<link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+	<header class="side-header">
+    	<a class="return" href=/>Home</a>
+	</header>
+	<h1 class="titulo">Aeronaves</h1>
+	<table class="infoTable">
+		<tr>
+			<th>ID</th>
+			<th>Cauda</th>
+		</tr>
+	{{range $k, $v := .}}
+		<tr>
+			<td><a class="links" href=naves?naveid={{$k}}>{{$k}}</a></td>
+			<td>{{$v.NumCauda}}</td>
+		</tr>
+	{{end}}
+	</table>
+</body>
+</html>
 `))
 
 // Adicionar link para Jeffrey epstein
 var HomeTemplate = template.Must(template.New("HomeTemplate").Parse(`
-<h1> Raestrando Epstein </h1>
-<p>Esse projeto tem como intuito rastrear o pedófilo e traficante de humanos Jeffrey Epstein,
-tendo como base, os voos que ele fez em um período de 20 anos</p>
-<table>
-	<tr>
-	<th><a href=pessoas> Pessoas </a></th>
-	</tr>
+<!DOCTYPE html>
+<html class="main-page">
+<head>
+	<meta charset="UTF-8">
+	<title>Rastreando Epstein</title>
+	<link rel="stylesheet" href="/css/style.css" media="screen">
+</head>
+<body>
+	<header class="main-header">
+		<h1 class="Titulo"> Rastreando Epstein </h1>
+	</header>
+	<p class="descricao">Esse projeto tem como intuito rastrear o pedófilo e traficante de humanos Jeffrey Epstein,
+		tendo como base, os voos que ele fez em um período de 20 anos.</p>
+	<table class="home-table">
+		<tr>
+		<th><a class="links" href=pessoas> Pessoas </a></th>
+		</tr>
 
-	<tr>
-	<th><a href=voos> Voos </a></th>
-	</tr>
+		<tr>
+		<th><a class="links" href=voos> Voos </a></th>
+		</tr>
 
-	<tr>
-	<th><a href=locais> Locais </a></th>
-	</tr>
+		<tr>
+		<th><a class="links" href=locais> Locais </a></th>
+		</tr>
 
-	<tr>
-	<th><a href=naves> Aeronaves </a></th>
-	</tr>
+		<tr>
+		<th><a class="links" href=aeronaves> Aeronaves </a></th>
+		</tr>
 
-	<tr>
-	<th><a href=aeroportos> Aeroportos </a></th>
-	</tr>
-</table>
+		<tr>
+		<th><a class="links" href=aeroportos> Aeroportos </a></th>
+		</tr>
+	</table>
+</body>
+</html>
 `))
