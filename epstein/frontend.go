@@ -490,7 +490,6 @@ var HomeTemplate = template.Must(template.New("HomeTemplate").Parse(`
 		<tr>
 		<th><a class="links" href=voos> Voos </a></th>
 		</tr>
-
 		<tr>
 		<th><a class="links" href=locais> Locais </a></th>
 		</tr>
