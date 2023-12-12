@@ -29,7 +29,7 @@ var PessoaTemp = template.Must(template.New("PessoaTemplate").Parse(`
 	</header>
 	
     <h1 class="titulo"><a class="links" href=pessoas>Pessoa</a> {{.Nome}}</h1>
-    <img class="main-image" src="https://loremflickr.com/640/480/" alt="certamente nao eh um gato">
+    <img class="main-image" src="{{.ImagemURL.Value}}" alt="certamente nao eh um gato">
     <table class="infoTable">
     <tbody>
         <tr>
@@ -39,22 +39,6 @@ var PessoaTemp = template.Must(template.New("PessoaTemplate").Parse(`
         <tr>
             <th>Iniciais</th>
             <td>{{.Iniciais}}</td>
-        </tr>
-        <tr>
-            <th>Local Nascimento ID</th>
-            <td>{{.LocalNascimentoID}}</td>
-        </tr>
-        <tr>
-            <th>Aniversário</th>
-            <td>{{.DataNascimento}}</td>
-        </tr>
-        <tr>
-            <th>Onde morreu</th>
-            <td>{{.LocalFalecimentoID}}</td>
-        </tr>
-        <tr>
-            <th>Dia da Morte</th>
-            <td>{{.DataFalecimento}}</td>
         </tr>
     </tbody>
     
@@ -98,12 +82,10 @@ var MapPessoasTemp = template.Must(template.New("PessoasTemplate").Parse(`
     <table class="infoTable">
     	<tr>
     		<th>Nome</th>
-    		<th>Nascimento</th>
     	</tr>
 		{{range $k, $v := .}}
     	<tr>
     		<td><a class="links" href=/pessoas?pessoaid={{$k}}>{{ $v.Nome }}</a></td>
-    		<td>{{ $v.DataNascimento}}</td>
 		</tr>
 		{{end}}
     </table>
@@ -117,7 +99,7 @@ type VooPagina struct {
 }
 
 // RECEBE UM vooPagina
-var VooTemp = template.Must(template.New("PessoaTemplate").Parse(`
+var VooTemp = template.Must(template.New("VooTemplate").Parse(`
 <!DOCTYPE html>
 <html class="side-page">
 <head>
@@ -135,7 +117,6 @@ var VooTemp = template.Must(template.New("PessoaTemplate").Parse(`
     	<tr>
     		<th>Numero</th>
 			<th>Data</th>
-			<th>NumPassageiros</th>
 			<th><a class="links" href=naves>Aeronave</a></th>
 			<th>Origem</th>
 			<th>Destino</th>
@@ -143,7 +124,6 @@ var VooTemp = template.Must(template.New("PessoaTemplate").Parse(`
     	<tr>
 			<td>{{.VooID}}</td>
     		<td>{{.Data}}</td>
-			<td>{{.NumPassageiros}}</td>
 			<td><a class="links" href=naves?naveid={{.AeronaveID}}>{{.AeronaveID}}</a></td>
 			<td><a class="links" href=aeroportos?codigo={{.OrigemID}}>{{.OrigemID}}</a></td>
 			<td><a class="links" href=aeroportos?codigo={{.DestinoID}}>{{.DestinoID}}</a></td>
@@ -186,7 +166,6 @@ var MapVoosTemp = template.Must(template.New("VoosTemplate").Parse(`
 		<tr>
 			<th>NumVoo</th>
 			<th>Data</th>
-			<th>NumPassageiros</th>
 			<th><a class="links" href=naves>NumAeronave</a></th>
 			<th>Origem</th>
 			<th>Destino</th>
@@ -195,7 +174,6 @@ var MapVoosTemp = template.Must(template.New("VoosTemplate").Parse(`
 		<tr>
 			<td><a class="links" href=voos?vooid={{$k}}>{{$k}}</a></td>
 			<td>{{$v.Data}}</td>
-			<td>{{$v.NumPassageiros}}</td>
 			<td><a class="links" href=naves?naveid={{.AeronaveID}}>{{.AeronaveID}}</a></td>
 			<td><a class="links" href=aeroportos?codigo={{$v.OrigemID}}>{{$v.OrigemID}}</a></td>
 			<td><a class="links" href=aeroportos?codigo={{$v.DestinoID}}>{{$v.DestinoID}}</a></td>
@@ -518,7 +496,7 @@ var HomeTemplate = template.Must(template.New("HomeTemplate").Parse(`
 		</tr>
 
 		<tr>
-		<th><a class="links" href=aeronaves> Aeronaves </a></th>
+		<th><a class="links" href=naves> Aeronaves </a></th>
 		</tr>
 
 		<tr>
