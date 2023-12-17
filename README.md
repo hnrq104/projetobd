@@ -2,7 +2,7 @@
 
 `Disciplina`: Banco de Dados ICP-489
 
-`Professora`: VIVIAN DOS SANTOS SILVA
+`Professora`: VIVIAN DOS SANTOS
 
 `Alunos`:
 - ARTHUR SOBRINHO FERREIRA DA ROCHA
@@ -12,10 +12,13 @@
 
 A apresentação de slides (canvas) pode ser vista em [aqui](https://www.canva.com/design/DAF2HkRTCow/_hkF4d4rpdQAPzVuAKFlxA/edit?utm_content=DAF2HkRTCow&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton).
 
+Caso não esteja vendo isso no próprio github, o link (onde recomendo ler) é este: https://github.com/hnrq104/projetobd
+
+
 Para o projeto, navegando na internet, encontramos este link: https://www.howellwoltz.com/uploads/1/7/0/4/17044718/flight_logs.pdf.
 
 
-Nele há um pdf (que foi convertido para xlsx - excel) contendo viagems do bilionário (agora morto) [Jeffrey Epstein](https://en.wikipedia.org/wiki/Jeffrey_Epstein) e pessoas que acompanharam-lo em viagems.
+Nele há um pdf (que foi convertido para xlsx - excel) contendo viagens do bilionário (agora morto) [Jeffrey Epstein](https://en.wikipedia.org/wiki/Jeffrey_Epstein) e pessoas que acompanharam-lo em viagens.
 
 Varios nomes famosos aparecem, entre eles:
 
@@ -31,10 +34,11 @@ Existem 2 programas de fato nesse repositório:
 1.   prog2 (que é o programa que hospeda o site no port localhost:8000)
 2.   preenche (contido na subpasta internal) que de fato preennche o banco de dados
 
-É convertemos (usando o LibreCalc) o arquivo xlsx para um CSV e usando as bibliotecas nativas de Go, fizemos as leituras dos campos e buscamos (concorrentemente) na Wikipedia informações sobre cada entidade interessante que aparece no arquivo.
+
+É convertemos (usando o LibreCalc) o arquivo xlsx para um CSV e usando as bibliotecas nativas de Go, fizemos as leituras dos campos e buscamos (concorrentemente) na Wikipedia informações sobre cada entidade interessante mencionada no arquivo.
 
 
-O frontend foi feito todo usando templates em Go também, (todas bibliotecas nativas, principalmente porque ninguém do grupo já estagiou e não tinhamos experiência com web-dev). Colocamos, no entanto, um css para a melhor visualização (estava muito feio durante a apresentação)
+O frontend foi feito todo usando templates em Go também, (todas bibliotecas nativas, principalmente porque ninguém do grupo já estagiou e não tinhamos experiência com web-dev). Colocamos, no entanto, um css para a melhor visualização, pois estava muito feio durante a apresentação.
 
 ## Home
 ![home](readmefile/home.png)
@@ -52,7 +56,7 @@ O frontend foi feito todo usando templates em Go também, (todas bibliotecas nat
 ## Queries
 As queries feitas podem ser vistas em `banco.go` . 
 
-Uma coisa é importante afirmar, o banco não está de fato completo, pois não conseguimos adquirir as informações sobre local de nascimento, morte e datas de nascimento e morte sobre as pessoas. 
+É importante salientar: o banco não está de fato completo, pois não conseguimos adquirir as informações sobre local de nascimento, morte e datas de nascimento e morte sobre as pessoas. 
 
 Idealmente, o projeto está apto para receber essas informações e elas seriam adicionadas entre paginas de locais e pessoas.
 
