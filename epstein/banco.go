@@ -152,7 +152,7 @@ func PassageirosPorVoo(IDVoo int64, conn *sql.DB) ([]*Pessoa, error) {
 
 func TodosPaginaPortos(conn *sql.DB) (map[string]*PaginaPorto, error) {
 	rows, err := conn.Query(`SELECT Codigo, A.urlImagem, A.Descricao, A.titulo,nome,LocalID nome from 
-		Aeroporto as A join Localidade on Localizacao = LocalID;`)
+		Aeroporto as A join Localidade on Localizacao = LocalID`)
 	if err != nil {
 		return nil, err
 	}
