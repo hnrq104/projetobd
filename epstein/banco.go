@@ -333,15 +333,12 @@ func NumVoosPorPessoaPorNave(PessoaID int, conn *sql.DB) ([]*numVoosNave, error)
 
 	TotalVoosNave := make([]*numVoosNave, 0, 6)
 	for rows.Next(){
-		var numVoos, idAeronave int
-		err := rows.Scan(&idAeronave, &numVoos)
+		var nvn *numVoosNave
+		err := rows.Scan(&nvn.idNave, &nvn.numVoos)
 		if err != nil{
 			return nil, fmt.Errorf("NumVoosPorPessoaPorNave %d: %v", PessoaID, err)
 		}
 
-		nvn := new(numVoosNave)
-		nvn.idNave = idAeronave
-		nvn.numVoos = numVoos
 		TotalVoosNave = append(TotalVoosNave, nvn)
 	}
 	if err := rows.Err(); err != nil {
@@ -352,5 +349,25 @@ func NumVoosPorPessoaPorNave(PessoaID int, conn *sql.DB) ([]*numVoosNave, error)
 }
 
 
-
-
+func NuncaVisitaramIlha(conn *sql.DB) ([]*Pessoa, error){
+	rows, err := conn.Query(`SELECT PessoaID, Nome FROM 
+	Pessoa JOIN Embarcam ON PessoaID = fk_Pessoa JOIN VOO where VooID=fk_Voo
+	WHERE Destino = (SELECT Codigo from Localidade JOIN Aeroporto on LocalID=Localizacao
+		WHERE nome = "Charlotte Amalie, St. Thomas, United States Virgin Islands" `)
+	if err != nil {
+		return nil, err
+	}
+	var pessoas = make([]*Pessoa, 0,6)
+	for rows.Next() {
+		var pes Pessoa
+		err := rows.Scan(&pes.PessoaID, &pes.Nome)
+		if err != nil {
+			return nil, fmt.Errorf("NuncaVisitaramIlha: %v", err)
+		}
+		pessoas = append(pessoas, &pes)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("NuncaVisitaramIlha: %v", err)
+	}
+	return pessoas, nil
+}
