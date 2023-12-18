@@ -302,9 +302,9 @@ func VoosPorAeroporto(Codigo string, ArrDep bool, conn *sql.DB) ([]*Voo, error) 
 	return resp, nil
 }
 
-func NumVoosPorPessoa(PessoaID int, conn *sql.DB) (int, error) {
-	rows, err := conn.Query(`SELECT count(VooID) FROM 
-	Voo WHERE PessoaID = ?`, PessoaID)
+func NumVoosPorPessoa(PessoaID int64, conn *sql.DB) (int, error) {
+	rows, err := conn.Query(`SELECT count(fk_Voo) FROM 
+	Embarcam WHERE fk_Pessoa = ?`, PessoaID)
 	if err != nil {
 		return 0, err
 	}
@@ -323,7 +323,7 @@ type numVoosNave struct {
 	idNave  int
 }
 
-func NumVoosPorPessoaPorNave(PessoaID int, conn *sql.DB) ([]*numVoosNave, error) {
+func NumVoosPorPessoaPorNave(PessoaID int64, conn *sql.DB) ([]*numVoosNave, error) {
 	rows, err := conn.Query(`SELECT AeronaveID, count(VooID) FROM 
 	Embarcam JOIN Voo on fk_Voo=VooID JOIN Aeronave on Nave=AeronaveID WHERE fk_Pessoa = ? group by AeronaveID`, PessoaID)
 	if err != nil {
@@ -347,11 +347,10 @@ func NumVoosPorPessoaPorNave(PessoaID int, conn *sql.DB) ([]*numVoosNave, error)
 	return TotalVoosNave, nil
 }
 
-func NuncaVisitaramIlha(conn *sql.DB) ([]*Pessoa, error) {
-	rows, err := conn.Query(`SELECT PessoaID, Nome FROM 
-	Pessoa JOIN Embarcam ON PessoaID = fk_Pessoa JOIN Voo where VooID=fk_Voo
-	WHERE Destino = (SELECT Codigo from Localidade JOIN Aeroporto on LocalID=Localizacao
-		WHERE nome = "Charlotte Amalie, St. Thomas, United States Virgin Islands" `)
+func PessoasQueVisitaramAeroporto(codigo string, conn *sql.DB) ([]*Pessoa, error) {
+	rows, err := conn.Query(`select PessoaID, Nome from Pessoa as P where exists 
+	(select * from Embarcam join Voo on fk_Voo = VooID and fk_Pessoa = P.PessoaID 
+		where Origem = '?' or Destino = '?')`, codigo, codigo)
 	if err != nil {
 		return nil, err
 	}
@@ -360,7 +359,7 @@ func NuncaVisitaramIlha(conn *sql.DB) ([]*Pessoa, error) {
 		var pes Pessoa
 		err := rows.Scan(&pes.PessoaID, &pes.Nome)
 		if err != nil {
-			return nil, fmt.Errorf("NuncaVisitaramIlha: %v", err)
+			return nil, fmt.Errorf("PessoasQueVisitaramAeroporto: %v", err)
 		}
 		pessoas = append(pessoas, &pes)
 	}
@@ -368,4 +367,48 @@ func NuncaVisitaramIlha(conn *sql.DB) ([]*Pessoa, error) {
 		return nil, fmt.Errorf("NuncaVisitaramIlha: %v", err)
 	}
 	return pessoas, nil
+}
+
+func PessoasQueViajaramCom(pessoaID int64, conn *sql.DB) ([]*Pessoa, error) {
+	rows, err := conn.Query(`select E.fk_Pessoa from 
+		Embarcam as E join Embarcam as B on 
+		E.fk_Voo = B.fk_Voo and B.fk_Pessoa= ? and E.fk_Pessoa != ?`, pessoaID, pessoaID)
+	if err != nil {
+		return nil, err
+	}
+	var pessoas = make([]*Pessoa, 0, 6)
+	for rows.Next() {
+		var pes Pessoa
+		err := rows.Scan(&pes.PessoaID)
+		if err != nil {
+			return nil, fmt.Errorf("PessoasQueViajaramCom: %v", err)
+		}
+		pessoas = append(pessoas, &pes)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("PessoasQueViajaramCom: %v", err)
+	}
+	return pessoas, nil
+}
+
+func VoosPorComNPessoas(n int64, conn *sql.DB) ([]*Voo, error) {
+	rows, err := conn.Query(`select * from Voo join Embarcam on 
+	VooID = fk_Voo group by VooID having count(fk_Pessoa) > ?`, n)
+	if err != nil {
+		return nil, err
+	}
+
+	resp := make([]*Voo, 0, 20)
+	for rows.Next() {
+		var v Voo
+		err := rows.Scan(&v.VooID, &v.OrigemID, &v.DestinoID, &v.Data)
+		if err != nil {
+			return nil, fmt.Errorf("VoosPorNPessoas %05d: %v", n, err)
+		}
+		resp = append(resp, &v)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("VoosPorNPessoas %05d: %v", n, err)
+	}
+	return resp, nil
 }
