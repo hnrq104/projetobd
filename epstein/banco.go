@@ -301,3 +301,56 @@ func VoosPorAeroporto(Codigo string, ArrDep bool, conn *sql.DB) ([]*Voo, error) 
 	}
 	return resp, nil
 }
+
+func NumVoosPorPessoa(PessoaID int, conn *sql.DB) (int, error){
+	rows, err := conn.Query(`SELECT count(VooID) FROM 
+	Voo WHERE PessoaID = ?`, PessoaID)
+	if(err != nil){
+		return 0, err
+	}
+
+	var numVoos int
+	err = rows.Scan(&numVoos)
+
+	if err := rows.Err(); err != nil {
+		return 0, fmt.Errorf("NumVoosPorPessoa %d: %v", PessoaID, err)
+	}
+	return numVoos, nil
+}
+
+
+type numVoosNave struct{
+	numVoos int 
+	idNave int
+}
+
+func NumVoosPorPessoaPorNave(PessoaID int, conn *sql.DB) ([]*numVoosNave, error){
+	rows, err := conn.Query(`SELECT AeronaveID, count(VooID) FROM 
+	Embarcam JOIN Voo on fk_Voo=VooID JOIN Aeronave on Nave=AeronaveID WHERE fk_Pessoa = ? group by AeronaveID`, PessoaID)
+	if(err != nil){
+		return nil, err
+	}
+
+	TotalVoosNave := make([]*numVoosNave, 0, 6)
+	for rows.Next(){
+		var numVoos, idAeronave int
+		err := rows.Scan(&idAeronave, &numVoos)
+		if err != nil{
+			return nil, fmt.Errorf("NumVoosPorPessoaPorNave %d: %v", PessoaID, err)
+		}
+
+		nvn := new(numVoosNave)
+		nvn.idNave = idAeronave
+		nvn.numVoos = numVoos
+		TotalVoosNave = append(TotalVoosNave, nvn)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("NumVoosPorPessoaPorNave %d: %v", PessoaID, err)
+	}
+
+	return TotalVoosNave, nil
+}
+
+
+
+

@@ -18,7 +18,7 @@ Caso não esteja vendo isso no próprio github, o link (onde recomendo ler) é e
 Para o projeto, navegando na internet, encontramos este link: https://www.howellwoltz.com/uploads/1/7/0/4/17044718/flight_logs.pdf.
 
 
-Nele há um pdf (que foi convertido para xlsx - excel) contendo viagens do bilionário (agora morto) [Jeffrey Epstein](https://en.wikipedia.org/wiki/Jeffrey_Epstein) e pessoas que acompanharam-lo em viagens.
+Nele há um pdf (que foi convertido para xlsx - excel) contendo viagens do bilionário (agora morto) [Jeffrey Epstein](https://en.wikipedia.org/wiki/Jeffrey_Epstein) e pessoas que o acompanharam em viagens.
 
 Varios nomes famosos aparecem, entre eles:
 
