@@ -302,10 +302,10 @@ func VoosPorAeroporto(Codigo string, ArrDep bool, conn *sql.DB) ([]*Voo, error) 
 	return resp, nil
 }
 
-func NumVoosPorPessoa(PessoaID int, conn *sql.DB) (int, error){
+func NumVoosPorPessoa(PessoaID int, conn *sql.DB) (int, error) {
 	rows, err := conn.Query(`SELECT count(VooID) FROM 
 	Voo WHERE PessoaID = ?`, PessoaID)
-	if(err != nil){
+	if err != nil {
 		return 0, err
 	}
 
@@ -318,24 +318,23 @@ func NumVoosPorPessoa(PessoaID int, conn *sql.DB) (int, error){
 	return numVoos, nil
 }
 
-
-type numVoosNave struct{
-	numVoos int 
-	idNave int
+type numVoosNave struct {
+	numVoos int
+	idNave  int
 }
 
-func NumVoosPorPessoaPorNave(PessoaID int, conn *sql.DB) ([]*numVoosNave, error){
+func NumVoosPorPessoaPorNave(PessoaID int, conn *sql.DB) ([]*numVoosNave, error) {
 	rows, err := conn.Query(`SELECT AeronaveID, count(VooID) FROM 
 	Embarcam JOIN Voo on fk_Voo=VooID JOIN Aeronave on Nave=AeronaveID WHERE fk_Pessoa = ? group by AeronaveID`, PessoaID)
-	if(err != nil){
+	if err != nil {
 		return nil, err
 	}
 
 	TotalVoosNave := make([]*numVoosNave, 0, 6)
-	for rows.Next(){
+	for rows.Next() {
 		var nvn *numVoosNave
 		err := rows.Scan(&nvn.idNave, &nvn.numVoos)
-		if err != nil{
+		if err != nil {
 			return nil, fmt.Errorf("NumVoosPorPessoaPorNave %d: %v", PessoaID, err)
 		}
 
@@ -348,16 +347,15 @@ func NumVoosPorPessoaPorNave(PessoaID int, conn *sql.DB) ([]*numVoosNave, error)
 	return TotalVoosNave, nil
 }
 
-
-func NuncaVisitaramIlha(conn *sql.DB) ([]*Pessoa, error){
+func NuncaVisitaramIlha(conn *sql.DB) ([]*Pessoa, error) {
 	rows, err := conn.Query(`SELECT PessoaID, Nome FROM 
-	Pessoa JOIN Embarcam ON PessoaID = fk_Pessoa JOIN VOO where VooID=fk_Voo
+	Pessoa JOIN Embarcam ON PessoaID = fk_Pessoa JOIN Voo where VooID=fk_Voo
 	WHERE Destino = (SELECT Codigo from Localidade JOIN Aeroporto on LocalID=Localizacao
 		WHERE nome = "Charlotte Amalie, St. Thomas, United States Virgin Islands" `)
 	if err != nil {
 		return nil, err
 	}
-	var pessoas = make([]*Pessoa, 0,6)
+	var pessoas = make([]*Pessoa, 0, 6)
 	for rows.Next() {
 		var pes Pessoa
 		err := rows.Scan(&pes.PessoaID, &pes.Nome)
